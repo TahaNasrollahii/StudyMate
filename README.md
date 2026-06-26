@@ -1,4 +1,4 @@
-# Learnova API
+# StudyMate API
 
 An AI-powered study assistant backend that generates summaries, quizzes, and study plans using LLM technology.
 
@@ -10,7 +10,7 @@ An AI-powered study assistant backend that generates summaries, quizzes, and stu
 
 ## Overview
 
-Learnova API is a REST API that lets users submit a topic and receive AI-generated study content powered by an LLM via OpenRouter. Results are persisted in PostgreSQL and cached with Redis for optimal performance.
+StudyMate API is a REST API that lets users submit a topic and receive AI-generated study content powered by an LLM via OpenRouter. Results are persisted in PostgreSQL and cached with Redis for optimal performance.
 
 ## Tech Stack
 
@@ -25,7 +25,7 @@ Learnova API is a REST API that lets users submit a topic and receive AI-generat
 ## Project Structure
 
 ```
-learnova_api/
+studymate/
 ├── app/
 │   ├── main.py          # FastAPI application setup
 │   ├── config.py        # Settings management
@@ -48,8 +48,8 @@ learnova_api/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd learnova_api
+   git clone https://github.com/TahaNasrollahii/StudyMate.git
+   cd StudyMate
    ```
 
 2. **Create virtual environment**
@@ -186,10 +186,10 @@ GET /api/v1/study/history/{topic}
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql+asyncpg://postgres:password@localhost:5432/learnova` |
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql+asyncpg://postgres:password@localhost:5432/studymate` |
 | `REDIS_URL` | Redis connection string | `redis://localhost:6379` |
 | `OPENROUTER_API_KEY` | OpenRouter API key | - |
-| `APP_NAME` | Application name | `Learnova API` |
+| `APP_NAME` | Application name | `StudyMate API` |
 | `APP_VERSION` | Application version | `1.0.0` |
 
 ## Testing

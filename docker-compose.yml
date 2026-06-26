@@ -4,7 +4,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:password@db:5432/learnova
+      - DATABASE_URL=postgresql+asyncpg://postgres:password@db:5432/studymate
       - REDIS_URL=redis://redis:6379
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
     depends_on:
@@ -19,7 +19,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=learnova
+      - POSTGRES_DB=studymate
     ports:
       - "5433:5432"
     volumes:

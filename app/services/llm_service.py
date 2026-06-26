@@ -50,8 +50,8 @@ async def generate_study_content(topic: str, mode: str) -> str:
     headers = {
         "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://learnova-api.com",
-        "X-Title": "Learnova API"
+        "HTTP-Referer": "https://studymate-api.com",
+        "X-Title": "StudyMate API"
     }
     
     payload = {

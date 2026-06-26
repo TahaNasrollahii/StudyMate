@@ -1,5 +1,5 @@
 """
-Learnova API - AI-powered study assistant backend.
+StudyMate API - AI-powered study assistant backend.
 
 This module creates and configures the FastAPI application.
 """
@@ -26,13 +26,13 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan handler for startup and shutdown events."""
-    logger.info("Starting Learnova API...")
+    logger.info("Starting StudyMate API...")
     await init_db()
     logger.info("Database initialized")
     
     yield
     
-    logger.info("Shutting down Learnova API...")
+    logger.info("Shutting down StudyMate API...")
     await close_redis()
     await close_db()
     logger.info("Cleanup complete")

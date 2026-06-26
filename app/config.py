@@ -9,10 +9,10 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:password@localhost:5432/learnova"
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:password@localhost:5432/studymate"
     REDIS_URL: str = "redis://localhost:6379"
     OPENROUTER_API_KEY: str = ""
-    APP_NAME: str = "Learnova API"
+    APP_NAME: str = "StudyMate API"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
 
