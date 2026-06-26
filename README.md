@@ -25,7 +25,7 @@ StudyMate API is a REST API that lets users submit a topic and receive AI-genera
 ## Project Structure
 
 ```
-studymate/
+StudyMate/
 ├── app/
 │   ├── main.py          # FastAPI application setup
 │   ├── config.py        # Settings management
