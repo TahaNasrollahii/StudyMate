@@ -17,8 +17,7 @@ from app.redis_client import close_redis
 from app.routers import study
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -29,9 +28,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Starting StudyMate API...")
     await init_db()
     logger.info("Database initialized")
-    
+
     yield
-    
+
     logger.info("Shutting down StudyMate API...")
     await close_redis()
     await close_db()
@@ -44,7 +43,7 @@ app = FastAPI(
     description="An AI-powered study assistant API that generates summaries, quizzes, and study plans.",
     docs_url="/docs",
     redoc_url="/redoc",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -52,7 +51,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 app.include_router(study.router, prefix="/api/v1")
@@ -61,8 +60,4 @@ app.include_router(study.router, prefix="/api/v1")
 @app.get("/", tags=["root"])
 async def root() -> dict:
     """Root endpoint with API information."""
-    return {
-        "name": settings.APP_NAME,
-        "version": settings.APP_VERSION,
-        "docs": "/docs"
-    }
+    return {"name": settings.APP_NAME, "version": settings.APP_VERSION, "docs": "/docs"}

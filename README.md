@@ -224,6 +224,39 @@ pytest tests/test_study.py::test_health_check
 - Comprehensive error handling
 - Business logic in services, not routers
 
+## CI/CD Pipeline
+
+The project uses GitHub Actions for Continuous Integration (CI) and Continuous Deployment (CD).
+
+### Pipeline Stages
+
+The workflow `.github/workflows/pipeline.yml` automates the following processes on the `main` branch:
+
+1. **Linting and Formatting**: Enforces code quality using `ruff`. The pipeline will fail if there are any linting or formatting errors.
+2. **Testing**: Runs the automated test suite using `pytest` and generates coverage reports.
+3. **Docker Validation**: Builds the production Docker image using `docker buildx` and caching to verify the `Dockerfile` works correctly.
+4. **Deployment**: Deploys the application automatically to a Linux VPS via SSH after all CI jobs succeed.
+
+### GitHub Secrets Required
+
+For the CD pipeline to deploy successfully, the following secrets must be configured in your GitHub repository:
+
+| Secret Name | Description | Example |
+|-------------|-------------|---------|
+| `VPS_HOST` | The IP address or domain name of your Linux VPS | `198.51.100.1` |
+| `VPS_USERNAME` | SSH username for your VPS | `deploy` or `root` |
+| `VPS_SSH_KEY` | Private SSH key authorized to connect to the VPS | `-----BEGIN OPENSSH PRIVATE KEY-----...` |
+| `OPENROUTER_API_KEY` | The API key for OpenRouter, injected dynamically to `.env` | `sk-or-v1-...` |
+
+### Deployment Flow
+
+The deployment process executes the following steps on the VPS:
+1. Navigates to the project directory.
+2. Pulls the latest code from the `main` branch.
+3. Automatically generates the `.env` file securely using the `OPENROUTER_API_KEY` secret.
+4. Rebuilds and restarts the Docker containers (`docker-compose up -d --build`).
+5. Cleans up dangling Docker images to free up server space.
+
 ## License
 
 MIT License
