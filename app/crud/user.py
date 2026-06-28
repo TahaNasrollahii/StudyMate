@@ -50,3 +50,12 @@ async def authenticate_user(
     if not verify_password(password, user.hashed_password):
         return None
     return user
+
+async def update_user(db: AsyncSession, user: User, update_data: dict) -> User:
+    """Update user fields."""
+    for field, value in update_data.items():
+        setattr(user, field, value)
+    db.add(user)
+    await db.flush()
+    await db.refresh(user)
+    return user

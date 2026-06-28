@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import close_db, init_db
-from app.redis_client import close_redis
+from app.redis_client import close_redis, init_redis
 from app.routers import auth, study, users
 
 logging.basicConfig(
@@ -26,6 +26,11 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan handler for startup and shutdown events."""
     logger.info("Starting StudyMate API...")
+    
+    # Initialize Redis before DB
+    logger.info("Connecting to Redis...")
+    await init_redis()
+    
     await init_db()
     logger.info("Database initialized")
 

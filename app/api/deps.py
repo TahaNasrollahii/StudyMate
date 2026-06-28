@@ -16,6 +16,7 @@ from app.crud.user import get_user_by_id
 from app.database import get_db
 from app.models.user import User
 from app.schemas.token import TokenPayload
+from app.services.auth_service import is_session_valid
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"/api/v1/auth/login/access-token"
@@ -47,6 +48,14 @@ async def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token missing subject",
         )
+
+    # Check if session is globally revoked
+    if token_data.iat:
+        if not await is_session_valid(int(token_data.sub), int(token_data.iat)):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Session has been revoked",
+            )
 
     user = await get_user_by_id(db, user_id=int(token_data.sub))
     if not user:

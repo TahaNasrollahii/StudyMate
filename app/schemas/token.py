@@ -18,4 +18,6 @@ class TokenPayload(BaseModel):
     """Token payload schema."""
     sub: Optional[str] = None
     exp: Optional[int] = None
+    iat: Optional[int] = None
+    jti: Optional[str] = None
     type: Optional[str] = None

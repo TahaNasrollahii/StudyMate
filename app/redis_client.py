@@ -8,38 +8,29 @@ import redis.asyncio as aioredis
 
 from app.config import settings
 
-class DummyRedis:
-    def __init__(self):
-        self.store = {}
-    
-    async def close(self):
-        pass
-
-    async def get(self, key):
-        return self.store.get(key)
-    
-    async def setex(self, key, ttl, value):
-        self.store[key] = value
-
-    async def exists(self, key):
-        return 1 if key in self.store else 0
-
-redis_client: Optional[Union[aioredis.Redis, DummyRedis]] = None
+redis_client: Optional[aioredis.Redis] = None
 
 
-async def get_redis() -> Union[aioredis.Redis, DummyRedis]:
-    """Get Redis client instance or fallback."""
+async def get_redis() -> aioredis.Redis:
+    """Get Redis client instance. Must be initialized before use."""
     global redis_client
     if redis_client is None:
-        try:
-            client = aioredis.from_url(
-                settings.REDIS_URL, encoding="utf-8", decode_responses=True
-            )
-            await client.ping()
-            redis_client = client
-        except Exception:
-            redis_client = DummyRedis()
+        raise RuntimeError("Redis client is not initialized")
     return redis_client
+
+
+async def init_redis() -> None:
+    """Initialize Redis client and verify connection."""
+    global redis_client
+    if redis_client is None:
+        client = aioredis.from_url(
+            settings.REDIS_URL, encoding="utf-8", decode_responses=True
+        )
+        try:
+            await client.ping()
+        except Exception as e:
+            raise RuntimeError(f"Failed to connect to Redis: {e}")
+        redis_client = client
 
 
 async def close_redis() -> None:
