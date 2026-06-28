@@ -13,7 +13,9 @@ from app.crud.study_result import (
     get_study_results,
     get_study_results_by_topic,
 )
+from app.api import deps
 from app.database import get_db
+from app.models.user import User
 from app.redis_client import get_cached_result, set_cached_result
 from app.schemas.study import (
     ErrorResponse,
@@ -43,7 +45,9 @@ router = APIRouter(prefix="/study", tags=["study"])
     description="Generate AI-powered study content for a given topic and mode.",
 )
 async def generate_study(
-    request: StudyRequest, db: AsyncSession = Depends(get_db)
+    request: StudyRequest, 
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(deps.get_current_active_user),
 ) -> StudyResponse:
     """
     Generate study content for a topic.
@@ -51,7 +55,7 @@ async def generate_study(
     - **topic**: The topic to generate content for
     - **mode**: The study mode (summary, quiz, or plan)
     """
-    cache_key = f"topic:{request.topic}:{request.mode.value}"
+    cache_key = f"user:{current_user.id}:topic:{request.topic}:{request.mode.value}"
 
     try:
         cached_result = await get_cached_result(cache_key)
@@ -62,7 +66,7 @@ async def generate_study(
         llm_result = await generate_study_content(request.topic, request.mode.value)
 
         db_result = await create_study_result(
-            db=db, topic=request.topic, mode=request.mode.value, result=llm_result
+            db=db, topic=request.topic, mode=request.mode.value, result=llm_result, user_id=current_user.id
         )
 
         response_data = {
@@ -99,10 +103,12 @@ async def generate_study(
     description="Retrieve all previously generated study results.",
 )
 async def get_history(
-    skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)
+    skip: int = 0, limit: int = 100, 
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(deps.get_current_active_user)
 ) -> StudyHistoryResponse:
     """Get all study results ordered by creation date."""
-    results = await get_study_results(db, skip=skip, limit=limit)
+    results = await get_study_results(db, user_id=current_user.id, skip=skip, limit=limit)
 
     study_responses = [
         StudyResponse(
@@ -128,10 +134,12 @@ async def get_history(
     description="Retrieve all study results for a specific topic.",
 )
 async def get_history_by_topic(
-    topic: str, skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)
+    topic: str, skip: int = 0, limit: int = 100, 
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(deps.get_current_active_user)
 ) -> StudyHistoryResponse:
     """Get study results filtered by topic."""
-    results = await get_study_results_by_topic(db, topic, skip=skip, limit=limit)
+    results = await get_study_results_by_topic(db, topic=topic, user_id=current_user.id, skip=skip, limit=limit)
 
     if not results:
         raise HTTPException(
